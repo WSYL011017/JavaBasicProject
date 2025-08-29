@@ -31,3 +31,42 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+### Miniprogram ###
+/web/miniprogram/java-basic-miniprogram/project.private.config.json
+/web/miniprogram/java-basic-miniprogram/node_modules/
+/web/miniprogram/java-basic-miniprogram/dist/
+/web/miniprogram/java-basic-miniprogram/miniprogram/miniprogram_npm/
+
+### Web PC ###
+/web/pc/java-basic-web/.vscode
+# Logs
+/web/pc/java-basic-web/logs
+/web/pc/java-basic-web/*.log
+/web/pc/java-basic-web/npm-debug.log*
+/web/pc/java-basic-web/yarn-debug.log*
+/web/pc/java-basic-web/yarn-error.log*
+/web/pc/java-basic-web/pnpm-debug.log*
+/web/pc/java-basic-web/lerna-debug.log*
+
+/web/pc/java-basic-web/node_modules
+/web/pc/java-basic-web/.DS_Store
+/web/pc/java-basic-web/dist
+/web/pc/java-basic-web/dist-ssr
+/web/pc/java-basic-web/coverage
+/web/pc/java-basic-web/*.local
+
+/web/pc/java-basic-web/cypress/videos/
+/web/pc/java-basic-web/cypress/screenshots/
+
+# Editor directories and files
+/web/pc/java-basic-web/!.vscode/extensions.json
+/web/pc/java-basic-web/.idea
+/web/pc/java-basic-web/*.suo
+/web/pc/java-basic-web/*.ntvs*
+/web/pc/java-basic-web/*.njsproj
+/web/pc/java-basic-web/*.sln
+/web/pc/java-basic-web/*.sw?
+
+/web/pc/java-basic-web/*.tsbuildinfo
