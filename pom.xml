@@ -6,15 +6,32 @@
     <groupId>com.basic</groupId>
     <artifactId>JavaBasicProject</artifactId>
     <version>{revision}</version>
+
     <name>JavaBasicProject</name>
     <description>JavaBasicProject</description>
+    <packaging>pom</packaging>
 
-    <url/>
+    <url>https://39.103.56.52/java-basic-project/</url>
     <licenses>
-        <license/>
+        <license>
+            <name>suyaraglow, Version 1.0</name>
+            <url>https://github.com/WSYL011017/JavaBasicProject/blob/main/LICENSE</url>
+            <distribution>repo</distribution>
+            <comments/>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>suyaraglow</id>
+            <name>WSYL011017</name>
+            <email>2992790671@qq.com</email>
+            <roles>
+                <role>lead</role>
+                <role>committer</role>
+            </roles>
+            <organization>suyaraglow</organization>
+            <organizationUrl>https://github.com/WSYL011017</organizationUrl>
+        </developer>
     </developers>
     <scm>
         <connection/>
@@ -27,7 +44,7 @@
     <properties>
         <java.version>24</java.version>
         <!-- 项目版本号 -->
-        <revision>3.9.1</revision>
+        <revision>1.0.0</revision>
         <spring-boot.version>3.5.5</spring-boot.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -41,6 +58,7 @@
         <knife4j.version>3.0.5</knife4j.version>
         <captcha.version>2.2.5</captcha.version>
         <velocity.version>2.4</velocity.version>
+        <git.commit.plugin>9.0.1</git.commit.plugin>
         <swagger.fox.version>3.0.0</swagger.fox.version>
         <velocity.tool.version>3.1</velocity.tool.version>
         <configuration.version>1.10</configuration.version>
@@ -51,6 +69,9 @@
         <docker.password>password</docker.password>
         <docker.registry>registry.cn-shanghai.aliyuncs.com</docker.registry>
         <commons-lang3.version>3.18.0</commons-lang3.version>
+        <spring.checkstyle.plugin>0.0.43</spring.checkstyle.plugin>
+        <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     </properties>
 
 
@@ -114,14 +135,14 @@
 
     <dependencyManagement>
         <dependencies>
-<!--            &lt;!&ndash;pig 公共版本定义&ndash;&gt;-->
-<!--            <dependency>-->
-<!--                <groupId>com.pig4cloud</groupId>-->
-<!--                <artifactId>pig-common-bom</artifactId>-->
-<!--                <version>${project.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
+            <!-- 公共版本定义-->
+            <dependency>
+                <groupId>com.basic.bom</groupId>
+                <artifactId>common-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- spring boot 依赖 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -168,12 +189,160 @@
     </dependencyManagement>
 
     <build>
+        <finalName>${project.name}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <configuration>
+                        <finalName>${project.build.finalName}</finalName>
+                        <layers>
+                            <enabled>true</enabled>
+                        </layers>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>io.fabric8</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker.plugin.version}</version>
+                    <configuration>
+                        <!-- Docker Remote Api-->
+                        <dockerHost>${docker.host}</dockerHost>
+                        <!-- Docker 镜像私服-->
+                        <registry>${docker.registry}</registry>
+                        <!-- 认证信息-->
+                        <authConfig>
+                            <push>
+                                <username>${docker.username}</username>
+                                <password>${docker.password}</password>
+                            </push>
+                        </authConfig>
+                        <images>
+                            <image>
+                                <!-- 镜像名称： 172.17.0.111/library/pig-gateway:2.6.3-->
+                                <name>${docker.registry}/${docker.namespace}/${project.name}:${project.version}</name>
+                                <build>
+                                    <dockerFile>${project.basedir}/Dockerfile</dockerFile>
+                                </build>
+                            </image>
+                        </images>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
+            <!-- 统一 revision 版本 -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                    <updatePomFile>true</updatePomFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <target>${maven.compiler.target}</target>
+                    <source>${maven.compiler.source}</source>
+                    <encoding>UTF-8</encoding>
+                    <parameters>true</parameters>
+                </configuration>
+            </plugin>
+            <!--打包jar 与git commit 关联插件-->
+            <plugin>
+                <groupId>io.github.git-commit-id</groupId>
+                <artifactId>git-commit-id-maven-plugin</artifactId>
+                <version>${git.commit.plugin}</version>
+                <executions>
+                    <execution>
+                        <id>get-the-git-infos</id>
+                        <phase>initialize</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <!--因为项目定制了jackson的日期时间序列化/反序列化格式，因此这里要进行配置,不然通过management.info.git.mode=full进行完整git信息监控时会存在问题-->
+                    <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+                    <includeOnlyProperties>
+                        <includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+                        <includeOnlyProperty>^git.commit.(id|message|time).*$</includeOnlyProperty>
+                    </includeOnlyProperties>
+                </configuration>
+            </plugin>
+            <!--
+                代码格式插件，默认使用spring 规则，可运行命令进行项目格式化：./mvnw spring-javaformat:apply 或 mvn spring-javaformat:apply，可在IDEA中安装插件以下插件进行自动格式化：
+                https://repo1.maven.org/maven2/io/spring/javaformat/spring-javaformat-intellij-idea-plugin
+            -->
+            <plugin>
+                <groupId>io.spring.javaformat</groupId>
+                <artifactId>spring-javaformat-maven-plugin</artifactId>
+                <version>${spring.checkstyle.plugin}</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <inherited>true</inherited>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>cloud</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>dev</profiles.active>
+                <nacos.username>nacos</nacos.username>
+                <nacos.password>nacos</nacos.password>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>boot</id>
+            <modules>
+                <module>boot-starter</module>
+            </modules>
+        </profile>
+    </profiles>
 
 </project>

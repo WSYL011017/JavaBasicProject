@@ -7,11 +7,14 @@
         <artifactId>JavaBasicProject</artifactId>
         <version>{revision}</version>
     </parent>
-    <groupId>com.basic.core</groupId>
-    <artifactId>common-core</artifactId>
+
+    <groupId>com.basic.boot</groupId>
+    <artifactId>boot-starter</artifactId>
     <version>{revision}</version>
-    <name>common-core</name>
-    <description>common-core</description>
+    <name>boot-starter</name>
+    <description>boot-starter 单体版本启动</description>
+
+    <packaging>jar</packaging>
     <url/>
     <licenses>
         <license/>
@@ -25,6 +28,7 @@
         <tag/>
         <url/>
     </scm>
+
     <properties>
         <java.version>24</java.version>
     </properties>
